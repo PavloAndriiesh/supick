@@ -1,3 +1,5 @@
+"user strict";
+
 module.exports = function supick(data, schema) {
   // if schema is array of strings join them
   if (isArrayOfStrings(schema)) {
