@@ -1,0 +1,11 @@
+language: node_js
+before_install:
+- npm install
+script:
+- npm test --coverage
+deploy:
+  provider: npm
+  email: pavlo.andriiesh@gmail.com
+  api_key: "$NPM_TOKEN"
+  on:
+    branch: master
