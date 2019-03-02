@@ -1,0 +1,29 @@
+{
+  "name": "supick",
+  "version": "1.0.0",
+  "description": "Easy to use lodash Pick alternative with configurable and extensive schema",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PavloAndriiesh/supick.git"
+  },
+  "keywords": [
+    "pick",
+    "deep_pick",
+    "pick_deep",
+    "pick_property",
+    "pick_object_property"
+  ],
+  "author": "Pavlo Andriiesh <pavlo.andriiesh@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PavloAndriiesh/supick/issues"
+  },
+  "homepage": "https://github.com/PavloAndriiesh/supick#readme",
+  "devDependencies": {
+    "jest": "^24.1.0"
+  }
+}
