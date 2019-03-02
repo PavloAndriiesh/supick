@@ -9,7 +9,7 @@ Empowered but easy to use lodash Pick alternative with configurable and extensiv
 `npm i supick`
 
 ```javascript
-import pick from "supick";
+const pick =  require("supick");
 
 const obj = {
   a: 1,
