@@ -1,6 +1,6 @@
 {
   "name": "supick",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Easy to use lodash Pick alternative with configurable and extensive schema",
   "main": "index.js",
   "scripts": {
