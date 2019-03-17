@@ -36,8 +36,9 @@ test("picks 'a' and nested 'c' and 'e' properties in 'b'", () => {
 const personInput = {
   name: "John Doe",
   age: 35,
+  hobby: "cars",
   family: {
-    wife: { name: "Susan", age: 32 },
+    wife: { name: "Susan", age: 32, hobby: "baseball" },
     children: [
       { name: "Alex", age: 5, hobby: "dancing" },
       { name: "Alice", age: 3, hobby: "music" }
@@ -50,6 +51,7 @@ const personInput = {
 };
 const personOutput = {
   name: "John Doe",
+  age: 35,
   family: {
     wife: { name: "Susan", age: 32 },
     children: [{ name: "Alex", age: 5 }, { name: "Alice", age: 3 }]
@@ -61,12 +63,10 @@ test("picks properties from nested objects and arrays using string schema", () =
   const schema = `
     {
         name,
+        age,
         family: {
-            wife,
-            children: {
-                name,
-                age
-            }
+            wife: { name, age },
+            children: { name, age }
         },
         cars: { model }    
     }`;
@@ -77,7 +77,8 @@ test("picks properties from nested objects and arrays using string schema", () =
 test("picks properties from nested objects and arrays using array schema (lodash style)", () => {
   const schema = [
     "name",
-    "family:{wife, children: {name, age}}",
+    "age",
+    "family:{wife: {name, age}, children: {name, age}}",
     "cars:{model}"
   ];
   expect(supick(personInput, schema)).toStrictEqual(personOutput);
@@ -86,8 +87,12 @@ test("picks properties from nested objects and arrays using array schema (lodash
 test("picks properties from nested objects and arrays using object schema (mongodb projection-style)", () => {
   const schema = {
     name: true,
+    age: true,
     family: {
-      wife: true,
+      wife: {
+        name: true,
+        age: true
+      },
       children: {
         name: 1,
         age: 1
@@ -97,4 +102,13 @@ test("picks properties from nested objects and arrays using object schema (mongo
   };
 
   expect(supick(personInput, schema)).toStrictEqual(personOutput);
+});
+
+test("picks properties from nested objects and arrays using customizer function", () => {
+  const customizer = function (key, value, path, depth) {
+    if (['name', 'age'].includes(key)) return true;
+    if (path === 'cars.model') return true;
+    return false;
+  }
+  expect(supick(personInput, customizer)).toStrictEqual(personOutput);
 });

@@ -1,11 +1,13 @@
 "user strict";
 
 module.exports = function supick(data, schema) {
+  // check if schema is customizer function
+  if (typeof schema === "function") return pickWithCustomizer(data, schema);
+
   // if schema is array of strings join them
   if (isArrayOfStrings(schema)) {
     schema = schema.join(",");
   }
-
   // if data is array of objects - pick properties recursively
   if (isArrayOfObjects(data)) {
     return data.map(el => supick(el, schema));
@@ -40,7 +42,7 @@ module.exports = function supick(data, schema) {
     }
   }
 
-  const obj = {};
+  const result = {};
   schemaParts.forEach(prop => {
     let propName;
     let propSchema;
@@ -54,13 +56,13 @@ module.exports = function supick(data, schema) {
 
     if (propName in data) {
       if (propSchema) {
-        obj[propName] = supick(data[propName], propSchema);
+        result[propName] = supick(data[propName], propSchema);
       } else {
-        obj[propName] = data[prop];
+        result[propName] = data[prop];
       }
     }
   });
-  return obj;
+  return result;
 };
 
 function isArrayOfStrings(structure) {
@@ -137,4 +139,33 @@ function normalizeSchemaString(schema) {
     schema = schema.slice(0, -1);
   }
   return schema;
+}
+
+function pickWithCustomizer(data, customizer, path = "", depth = 0) {
+  // if data is array of objects - pick properties recursively
+  if (isArrayOfObjects(data)) {
+    return data.map(el => pickWithCustomizer(el, customizer, path, depth));
+  }
+
+  const result = {};
+  for (const key in data) {
+    const newPath = path ? path + "." + key : key;
+    const newDepth = depth + 1;
+    if (typeof data[key] === "object") {
+      result[key] = pickWithCustomizer(
+        data[key],
+        customizer,
+        newPath,
+        newDepth
+      );
+    } else {
+      result[key] = data[key];
+    }
+    if (!customizer(key, data[key], newPath, depth)) {
+      if (typeof result[key] !== "object" || !Object.keys(result).length) {
+        delete result[key];
+      }
+    }
+  }
+  return result;
 }
